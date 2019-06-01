@@ -8,4 +8,5 @@
 
 class CcrecorderPipeline(object):
     def process_item(self, item, spider):
+        self.log('I have been in the pipeline too. Do not worry')
         return item
