@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
+import re
 from scrapy.selector import Selector
 from scrapy.spiders import CSVFeedSpider
 from ccrecorder.items import CCpin14
@@ -46,6 +47,12 @@ class RecordsSpider(CSVFeedSpider):
         # And now...
         pin14 = CCpin14()
 
+        # FUCK YOU, IDIOT DON GUERNSEY ! (https://www.linkedin.com/in/don-guernsey-8412663/)
+        response = response.replace(body=re.sub('>\s*<', '><',
+                                                response.body.replace('\n', ''),
+                                                0, re.M))
+        # FUCK YOU, IDIOT DON GUERNSEY ! (https://www.linkedin.com/in/don-guernsey-8412663/)
+
         NOT_FOUND = response.xpath(NO_PINS_FOUND_RESPONSE_XPATH).get()  # what is there
         if NOT_FOUND:                                                   # ?  (can't do without this, because of None)
             if NOT_FOUND.startswith('No PINs'):                         # No PINs?
@@ -62,12 +69,14 @@ class RecordsSpider(CSVFeedSpider):
                 yield None
 
         else:                                                           # there is a PIN like that
-            # Tried to iterate over selectors but it didn's work, this is a less elegant way
             lines_list = response.xpath(PIN_LIST_LINE_XPATH).getall()
+            lines_xpa = response.xpath('//table[@id="pins_table"]/tbody[@id="objs_body"]//tr')
             # extract the number(s) for the record(s), jump to the docs page
             # (as many times as necessary, come back every time when done
             for index, line in enumerate(lines_list):  # not to forget that 14 digit PIN gives 2 tables of results.
                 linear = str(index+1)
+                #line = re.sub(r'\n *?', '', line)
+                # line_selector = Selector(line)
                 #self.log(line)
                 line_xpath = '{}[{}]'.format(PIN_LIST_LINE_XPATH, linear)
                 pin14['pin'] = response.xpath(line_xpath + PIN14_XPATH).get()

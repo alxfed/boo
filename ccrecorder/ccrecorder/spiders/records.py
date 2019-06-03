@@ -44,7 +44,12 @@ class RecordsSpider(CSVFeedSpider):
         RECORD_NUMBER_XPATH = '/td[4]/a/@href'
         NO_PINS_FOUND_RESPONSE_XPATH = '//html/body/div[4]/div/div/div[2]/div/div/p[2]/text()' # where it can be
 
-        # And now...
+        # FUCK YOU, IDIOT DON GUERNSEY ! (https://www.linkedin.com/in/don-guernsey-8412663/)
+        response = response.replace(body=re.sub('>\s*<', '><',
+                                                response.body.replace('\n', ''),
+                                                0, re.M))
+        # FUCK YOU, IDIOT DON GUERNSEY ! (https://www.linkedin.com/in/don-guernsey-8412663/)
+
         NOT_FOUND = response.xpath(NO_PINS_FOUND_RESPONSE_XPATH).get()  # what is there
         if NOT_FOUND:                                                   # ?  (can't do without this, because of None)
             if NOT_FOUND.startswith('No PINs'):                         # No PINs?

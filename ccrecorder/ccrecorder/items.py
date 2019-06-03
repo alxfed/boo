@@ -7,6 +7,12 @@
 
 import scrapy
 
+class CCname(scrapy.Item):
+    """Names in the CC recorder database
+    """
+    name = scrapy.Field()
+    idx_name = scrapy.Field()
+
 class CCpin14(scrapy.Item):
     """pin14 item for pins spider
     """
